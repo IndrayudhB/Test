@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java Solutions — PRA SBQ</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --card: #161a22;
+    --border: #1f2533;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── Header ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 80px 20px 60px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 560px;
+    margin-inline: auto;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  /* ── Navigation pills ── */
+  .nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px 60px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    background: var(--surface);
+  }
+
+  .pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  /* ── Main grid ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  /* ── Question card ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .q-card:hover { border-color: var(--accent2); }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .q-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .q-title { flex: 1; }
+
+  .q-title h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .q-title .q-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .q-badges { display: flex; gap: 6px; }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-blue  { background: rgba(0,229,255,0.1);  color: var(--accent); }
+  .badge-green { background: rgba(16,185,129,0.1); color: var(--accent3); }
+  .badge-amber { background: rgba(245,158,11,0.1); color: var(--warn); }
+  .badge-purple{ background: rgba(124,58,237,0.1); color: #a78bfa; }
+
+  .toggle-icon {
+    font-size: 1.2rem;
+    color: var(--muted);
+    transition: transform 0.3s;
+  }
+
+  .q-card.open .toggle-icon { transform: rotate(180deg); }
+
+  /* ── Code body ── */
+  .q-body { display: none; }
+  .q-card.open .q-body { display: block; }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Code block ── */
+  .code-wrap {
+    position: relative;
+    background: var(--code-bg);
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--accent3); color: var(--accent3); }
+
+  pre {
+    margin: 0;
+    padding: 48px 28px 28px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+  }
+
+  /* Syntax colouring (lightweight) */
+  .kw  { color: #ff79c6; }
+  .cm  { color: #6272a4; font-style: italic; }
+  .str { color: #f1fa8c; }
+  .cls { color: #8be9fd; }
+  .num { color: #bd93f9; }
+  .fn  { color: #50fa7b; }
+  .ann { color: #ff6e6e; }
+
+  /* ── Info panel ── */
+  .info-panel {
+    padding: 20px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .info-block h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .info-block p, .info-block li {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .info-block ul { padding-left: 16px; }
+
+  .tc-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: #c9d1d9;
+    margin-top: 4px;
+  }
+
+  .tc-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger cards */
+  .q-card:nth-child(1) { animation-delay: 0.1s; }
+  .q-card:nth-child(2) { animation-delay: 0.15s; }
+  .q-card:nth-child(3) { animation-delay: 0.2s; }
+  .q-card:nth-child(4) { animation-delay: 0.25s; }
+  .q-card:nth-child(5) { animation-delay: 0.3s; }
+  .q-card:nth-child(6) { animation-delay: 0.35s; }
+  .q-card:nth-child(7) { animation-delay: 0.4s; }
+  .q-card:nth-child(8) { animation-delay: 0.45s; }
+
+  @media (max-width: 640px) {
+    header { padding: 12px 16px; }
+    .hero { padding: 50px 16px 40px; }
+    pre { font-size: 0.72rem; }
+    .q-header { padding: 16px; }
+    .q-badges { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Java<span>Solutions</span></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">PRA · SBQ · Java 17</div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">// 8 Complete Solutions</div>
+  <h1>Java Programming<br/><em>Answer Sheet</em></h1>
+  <p>All questions solved with clean code, sample test cases, and explanations. Click any card to expand.</p>
+</div>
+
+<div class="nav-pills">
+  <a class="pill" href="#q1">Q1 ATM</a>
+  <a class="pill" href="#q2">Q2 Loan Account</a>
+  <a class="pill" href="#q3">Q3 TrainTicket</a>
+  <a class="pill" href="#q4">Q4 Distinct Count</a>
+  <a class="pill" href="#q5">Q5 Billing System</a>
+  <a class="pill" href="#q6">Q6 Anagram</a>
+  <a class="pill" href="#q7">Q7 Student Ranking</a>
+  <a class="pill" href="#q8">Q8 Neon Number</a>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════════════════
+       Q1 — ATM Transaction
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="q-card open" id="q1">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">01</div>
+      <div class="q-title">
+        <h2>ATM Transaction</h2>
+        <div class="q-desc">Custom exception · InsufficientFundsException · IllegalArgumentException</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-blue">Exception Handling</span>
+        <span class="badge badge-green">Easy</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q1-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q1-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q1-logic')">Logic</button>
+      </div>
+
+      <div id="q1-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q1-code-text">import java.util.Scanner;
+
+<span class="cm">// Custom exception for insufficient funds</span>
+<span class="kw">class</span> <span class="cls">InsufficientFundsException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="fn">InsufficientFundsException</span>(<span class="cls">String</span> message) {
+        <span class="kw">super</span>(message);
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">public static void</span> <span class="fn">withdraw</span>(<span class="kw">int</span> balance, <span class="kw">int</span> amount)
+            <span class="kw">throws</span> <span class="cls">InsufficientFundsException</span> {
+
+        <span class="kw">if</span> (amount <= <span class="num">0</span>) {
+            <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(
+                <span class="str">"Error: Withdrawal amount must be greater than zero."</span>);
+        }
+        <span class="kw">if</span> (amount > balance) {
+            <span class="kw">throw new</span> <span class="cls">InsufficientFundsException</span>(
+                <span class="str">"Error: Insufficient funds in your account. Your current balance is "</span>
+                + balance + <span class="str">"."</span>);
+        }
+        System.out.<span class="fn">println</span>(<span class="str">"Transaction successful. Remaining balance: "</span>
+            + (balance - amount) + <span class="str">"."</span>);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> balance = sc.<span class="fn">nextInt</span>();
+        <span class="kw">int</span> amount  = sc.<span class="fn">nextInt</span>();
+        <span class="kw">try</span> {
+            <span class="fn">withdraw</span>(balance, amount);
+        } <span class="kw">catch</span> (<span class="cls">InsufficientFundsException</span> e) {
+            System.out.<span class="fn">println</span>(e.<span class="fn">getMessage</span>());
+        } <span class="kw">catch</span> (<span class="cls">IllegalArgumentException</span> e) {
+            System.out.<span class="fn">println</span>(e.<span class="fn">getMessage</span>());
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+
+      <div id="q1-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+            <div><span class="tc-label">Test Case 1 — Success</span>
+              <div class="tc-box">Input:  5000<br/>        2000<br/><br/>Output: Transaction successful. Remaining balance: 3000.</div></div>
+            <div><span class="tc-label">Test Case 2 — Insufficient Funds</span>
+              <div class="tc-box">Input:  3000<br/>        4000<br/><br/>Output: Error: Insufficient funds in your account. Your current balance is 3000.</div></div>
+            <div><span class="tc-label">Test Case 3 — Negative Amount</span>
+              <div class="tc-box">Input:  2000<br/>        -500<br/><br/>Output: Error: Withdrawal amount must be greater than zero.</div></div>
+            <div><span class="tc-label">Test Case 4 — Zero Amount</span>
+              <div class="tc-box">Input:  500<br/>        0<br/><br/>Output: Error: Withdrawal amount must be greater than zero.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="q1-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>Key Concepts</h4>
+            <ul>
+              <li>Custom exception <code>InsufficientFundsException extends Exception</code></li>
+              <li>Check amount ≤ 0 first → throw <code>IllegalArgumentException</code></li>
+              <li>Check amount > balance → throw <code>InsufficientFundsException</code></li>
+              <li>Print remaining balance on success</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Order of checks</h4>
+            <p>Always validate the amount BEFORE checking balance. Zero and negative must be caught first.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q2 — Loan Account ══ -->
+  <div class="q-card" id="q2">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">02</div>
+      <div class="q-title">
+        <h2>Loan Account Analysis</h2>
+        <div class="q-desc">ArrayList · filterLowInterestAccounts · getHighestLoanAmountAccount</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-purple">Collections</span>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q2-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q2-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q2-logic')">Logic</button>
+      </div>
+      <div id="q2-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q2-code-text">import java.util.*;
+
+<span class="kw">class</span> <span class="cls">LoanAccount</span> {
+    <span class="kw">private long</span>   loanAccountNumber;
+    <span class="kw">private</span> <span class="cls">String</span> accountHolderName;
+    <span class="kw">private double</span> loanAmount;
+    <span class="kw">private</span> <span class="cls">String</span> bankName;
+    <span class="kw">private double</span> interestRate;
+
+    <span class="kw">public</span> <span class="fn">LoanAccount</span>(<span class="kw">long</span> loanAccountNumber, <span class="cls">String</span> accountHolderName,
+                       <span class="kw">double</span> loanAmount, <span class="cls">String</span> bankName, <span class="kw">double</span> interestRate) {
+        <span class="kw">this</span>.loanAccountNumber = loanAccountNumber;
+        <span class="kw">this</span>.accountHolderName = accountHolderName;
+        <span class="kw">this</span>.loanAmount = loanAmount;
+        <span class="kw">this</span>.bankName = bankName;
+        <span class="kw">this</span>.interestRate = interestRate;
+    }
+
+    <span class="kw">public long</span>   <span class="fn">getLoanAccountNumber</span>()  { <span class="kw">return</span> loanAccountNumber; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getAccountHolderName</span>() { <span class="kw">return</span> accountHolderName; }
+    <span class="kw">public double</span> <span class="fn">getLoanAmount</span>()        { <span class="kw">return</span> loanAmount; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getBankName</span>()          { <span class="kw">return</span> bankName; }
+    <span class="kw">public double</span> <span class="fn">getInterestRate</span>()      { <span class="kw">return</span> interestRate; }
+
+    <span class="kw">public void</span> <span class="fn">setLoanAccountNumber</span>(<span class="kw">long</span> n)   { loanAccountNumber = n; }
+    <span class="kw">public void</span> <span class="fn">setAccountHolderName</span>(<span class="cls">String</span> n) { accountHolderName = n; }
+    <span class="kw">public void</span> <span class="fn">setLoanAmount</span>(<span class="kw">double</span> a)        { loanAmount = a; }
+    <span class="kw">public void</span> <span class="fn">setBankName</span>(<span class="cls">String</span> b)          { bankName = b; }
+    <span class="kw">public void</span> <span class="fn">setInterestRate</span>(<span class="kw">double</span> r)      { interestRate = r; }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">public static</span> <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; <span class="fn">filterLowInterestAccounts</span>(
+            <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; accounts, <span class="kw">double</span> threshold) {
+        <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; result = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="cls">LoanAccount</span> acc : accounts) {
+            <span class="kw">if</span> (acc.<span class="fn">getInterestRate</span>() &lt; threshold) result.<span class="fn">add</span>(acc);
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="kw">public static</span> <span class="cls">LoanAccount</span> <span class="fn">getHighestLoanAmountAccount</span>(
+            <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; accounts, <span class="cls">String</span> bankName) {
+        <span class="cls">LoanAccount</span> highest = <span class="kw">null</span>;
+        <span class="kw">for</span> (<span class="cls">LoanAccount</span> acc : accounts) {
+            <span class="kw">if</span> (acc.<span class="fn">getBankName</span>().<span class="fn">equalsIgnoreCase</span>(bankName)) {
+                <span class="kw">if</span> (highest == <span class="kw">null</span> || acc.<span class="fn">getLoanAmount</span>() &gt; highest.<span class="fn">getLoanAmount</span>())
+                    highest = acc;
+            }
+        }
+        <span class="kw">return</span> highest;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>(); sc.<span class="fn">nextLine</span>();
+        <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; accounts = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="kw">long</span>   accNum = sc.<span class="fn">nextLong</span>();  sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> name   = sc.<span class="fn">nextLine</span>();
+            <span class="kw">double</span> amount = sc.<span class="fn">nextDouble</span>(); sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> bank   = sc.<span class="fn">nextLine</span>();
+            <span class="kw">double</span> rate   = sc.<span class="fn">nextDouble</span>(); sc.<span class="fn">nextLine</span>();
+            accounts.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">LoanAccount</span>(accNum, name, amount, bank, rate));
+        }
+
+        <span class="kw">double</span> threshold = sc.<span class="fn">nextDouble</span>(); sc.<span class="fn">nextLine</span>();
+        <span class="cls">String</span> bankName  = sc.<span class="fn">nextLine</span>();
+
+        <span class="cls">List</span>&lt;<span class="cls">LoanAccount</span>&gt; filtered = <span class="fn">filterLowInterestAccounts</span>(accounts, threshold);
+        <span class="kw">if</span> (!filtered.<span class="fn">isEmpty</span>()) {
+            <span class="kw">for</span> (<span class="cls">LoanAccount</span> acc : filtered) {
+                System.out.<span class="fn">println</span>(acc.<span class="fn">getLoanAccountNumber</span>());
+                System.out.<span class="fn">println</span>(acc.<span class="fn">getAccountHolderName</span>());
+                System.out.<span class="fn">println</span>(acc.<span class="fn">getLoanAmount</span>());
+                System.out.<span class="fn">println</span>(acc.<span class="fn">getBankName</span>());
+                System.out.<span class="fn">println</span>(acc.<span class="fn">getInterestRate</span>());
+            }
+        } <span class="kw">else</span> {
+            System.out.<span class="fn">println</span>(<span class="str">"No accounts found with interest rate lower than the given threshold."</span>);
+        }
+
+        <span class="cls">LoanAccount</span> highest = <span class="fn">getHighestLoanAmountAccount</span>(accounts, bankName);
+        <span class="kw">if</span> (highest != <span class="kw">null</span>) {
+            System.out.<span class="fn">println</span>(highest.<span class="fn">getLoanAccountNumber</span>());
+            System.out.<span class="fn">println</span>(highest.<span class="fn">getAccountHolderName</span>());
+            System.out.<span class="fn">println</span>(highest.<span class="fn">getLoanAmount</span>());
+            System.out.<span class="fn">println</span>(highest.<span class="fn">getBankName</span>());
+            System.out.<span class="fn">println</span>(highest.<span class="fn">getInterestRate</span>());
+        } <span class="kw">else</span> {
+            System.out.<span class="fn">println</span>(<span class="str">"No highest loan amount account found for the mentioned bank."</span>);
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q2-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <span class="tc-label">Test Case 1</span>
+          <div class="tc-box">3
+1001 / John Doe / 50000.0 / HDFC Bank / 7.5
+1002 / Jane Doe / 60000.0 / HDFC Bank / 6.0
+1003 / Alice Smith / 40000.0 / ICICI Bank / 8.5
+threshold: 7.0 | bank: HDFC Bank
+
+Output:
+1002
+Jane Doe
+60000.0
+HDFC Bank
+6.0
+1002
+Jane Doe
+60000.0
+HDFC Bank
+6.0</div>
+        </div>
+      </div>
+      <div id="q2-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>Method 1 — filterLowInterestAccounts</h4>
+            <ul>
+              <li>Iterate list, add account if interestRate &lt; threshold</li>
+              <li>Return empty list if none match</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Method 2 — getHighestLoanAmountAccount</h4>
+            <ul>
+              <li>Filter by bankName (equalsIgnoreCase)</li>
+              <li>Track account with maximum loanAmount</li>
+              <li>Return null if bank not found</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q3 — TrainTicket ══ -->
+  <div class="q-card" id="q3">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">03</div>
+      <div class="q-title">
+        <h2>TrainTicket</h2>
+        <div class="q-desc">Arrays · findTicketWithMinPrice · findAveragePrice</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-purple">Arrays</span>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q3-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q3-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q3-logic')">Logic</button>
+      </div>
+      <div id="q3-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q3-code-text">import java.util.*;
+
+<span class="kw">class</span> <span class="cls">TrainTicket</span> {
+    <span class="kw">private int</span>    ticketId;
+    <span class="kw">private</span> <span class="cls">String</span> travellerName, source, destination, tierClass;
+    <span class="kw">private double</span> price;
+
+    <span class="kw">public</span> <span class="fn">TrainTicket</span>(<span class="kw">int</span> ticketId, <span class="cls">String</span> travellerName, <span class="cls">String</span> source,
+                       <span class="cls">String</span> destination, <span class="kw">double</span> price, <span class="cls">String</span> tierClass) {
+        <span class="kw">this</span>.ticketId = ticketId; <span class="kw">this</span>.travellerName = travellerName;
+        <span class="kw">this</span>.source = source;     <span class="kw">this</span>.destination = destination;
+        <span class="kw">this</span>.price = price;        <span class="kw">this</span>.tierClass = tierClass;
+    }
+
+    <span class="kw">public int</span>    <span class="fn">getTicketId</span>()        { <span class="kw">return</span> ticketId; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getTravellerName</span>()  { <span class="kw">return</span> travellerName; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getSource</span>()         { <span class="kw">return</span> source; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getDestination</span>()    { <span class="kw">return</span> destination; }
+    <span class="kw">public double</span> <span class="fn">getPrice</span>()           { <span class="kw">return</span> price; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getTierClass</span>()      { <span class="kw">return</span> tierClass; }
+
+    <span class="kw">public void</span> <span class="fn">setTicketId</span>(<span class="kw">int</span> id)              { ticketId = id; }
+    <span class="kw">public void</span> <span class="fn">setTravellerName</span>(<span class="cls">String</span> n)       { travellerName = n; }
+    <span class="kw">public void</span> <span class="fn">setSource</span>(<span class="cls">String</span> s)              { source = s; }
+    <span class="kw">public void</span> <span class="fn">setDestination</span>(<span class="cls">String</span> d)         { destination = d; }
+    <span class="kw">public void</span> <span class="fn">setPrice</span>(<span class="kw">double</span> p)               { price = p; }
+    <span class="kw">public void</span> <span class="fn">setTierClass</span>(<span class="cls">String</span> t)           { tierClass = t; }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">public static</span> <span class="cls">TrainTicket</span> <span class="fn">findTicketWithMinPriceForGivenSource</span>(
+            <span class="cls">TrainTicket</span>[] tickets, <span class="cls">String</span> source) {
+        <span class="cls">TrainTicket</span> min = <span class="kw">null</span>;
+        <span class="kw">for</span> (<span class="cls">TrainTicket</span> t : tickets) {
+            <span class="kw">if</span> (t.<span class="fn">getSource</span>().<span class="fn">equalsIgnoreCase</span>(source)) {
+                <span class="kw">if</span> (min == <span class="kw">null</span> || t.<span class="fn">getPrice</span>() &lt; min.<span class="fn">getPrice</span>()) min = t;
+            }
+        }
+        <span class="kw">return</span> min;
+    }
+
+    <span class="kw">public static double</span> <span class="fn">findAveragePriceOfTicketsForTierClass</span>(
+            <span class="cls">TrainTicket</span>[] tickets, <span class="cls">String</span> tierClass) {
+        <span class="kw">double</span> total = <span class="num">0</span>; <span class="kw">int</span> count = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="cls">TrainTicket</span> t : tickets) {
+            <span class="kw">if</span> (t.<span class="fn">getTierClass</span>().<span class="fn">equalsIgnoreCase</span>(tierClass)) { total += t.<span class="fn">getPrice</span>(); count++; }
+        }
+        <span class="kw">return</span> (count == <span class="num">0</span>) ? <span class="num">0</span> : total / count;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>(); sc.<span class="fn">nextLine</span>();
+        <span class="cls">TrainTicket</span>[] tickets = <span class="kw">new</span> <span class="cls">TrainTicket</span>[n];
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="kw">int</span>    id   = sc.<span class="fn">nextInt</span>();    sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> name = sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> src  = sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> dest = sc.<span class="fn">nextLine</span>();
+            <span class="kw">double</span> price= sc.<span class="fn">nextDouble</span>(); sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> tier = sc.<span class="fn">nextLine</span>();
+            tickets[i] = <span class="kw">new</span> <span class="cls">TrainTicket</span>(id, name, src, dest, price, tier);
+        }
+        <span class="cls">String</span> srcP  = sc.<span class="fn">nextLine</span>();
+        <span class="cls">String</span> tierP = sc.<span class="fn">nextLine</span>();
+
+        <span class="cls">TrainTicket</span> minT = <span class="fn">findTicketWithMinPriceForGivenSource</span>(tickets, srcP);
+        <span class="kw">if</span> (minT != <span class="kw">null</span>) { System.out.<span class="fn">println</span>(minT.<span class="fn">getTicketId</span>()); System.out.<span class="fn">println</span>(minT.<span class="fn">getSource</span>()); System.out.<span class="fn">println</span>(minT.<span class="fn">getPrice</span>()); }
+        <span class="kw">else</span> System.out.<span class="fn">println</span>(<span class="str">"No such Ticket found with mentioned attribute"</span>);
+
+        <span class="kw">double</span> avg = <span class="fn">findAveragePriceOfTicketsForTierClass</span>(tickets, tierP);
+        <span class="kw">if</span> (avg != <span class="num">0</span>) System.out.<span class="fn">println</span>(avg);
+        <span class="kw">else</span> System.out.<span class="fn">println</span>(<span class="str">"No such tier class found with mentioned attribute"</span>);
+
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q3-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <span class="tc-label">Test Case 1 — Input</span>
+          <div class="tc-box">5
+1001 rohan chennai manglore 1200 3A
+1002 Manoj agra vizag 3999 2A
+1003 yash banglore ooty 1800 2A
+1004 rupali kolkata vizag 1400 1A
+1005 arun chennai shiridi 2500 2A
+chennai
+2A</div>
+          <span class="tc-label" style="margin-top:12px;display:block;">Output</span>
+          <div class="tc-box">1001
+chennai
+1200.0
+2766.3333333333335</div>
+        </div>
+      </div>
+      <div id="q3-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>Method 1</h4>
+            <p>Loop through array, match source (case-insensitive), track minimum price ticket.</p>
+          </div>
+          <div class="info-block">
+            <h4>Method 2</h4>
+            <p>Sum prices for matching tierClass, divide by count. Return 0 if no match.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q4 — Count Distinct ══ -->
+  <div class="q-card" id="q4">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">04</div>
+      <div class="q-title">
+        <h2>Count Distinct Elements</h2>
+        <div class="q-desc">HashSet · InputMismatchException · Exception Handling</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-blue">Exception Handling</span>
+        <span class="badge badge-green">Easy</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q4-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q4-tc')">Test Cases</button>
+      </div>
+      <div id="q4-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q4-code-text">import java.util.*;
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">try</span> {
+            <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+            <span class="cls">Set</span>&lt;<span class="cls">Integer</span>&gt; set = <span class="kw">new</span> <span class="cls">LinkedHashSet</span>&lt;&gt;();
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+                set.<span class="fn">add</span>(sc.<span class="fn">nextInt</span>());
+            }
+            System.out.<span class="fn">println</span>(set.<span class="fn">size</span>());
+        } <span class="kw">catch</span> (<span class="cls">InputMismatchException</span> e) {
+            System.out.<span class="fn">println</span>(e.<span class="fn">getClass</span>().<span class="fn">getSimpleName</span>());
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q4-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div><span class="tc-label">Test Case 1 — Valid</span>
+              <div class="tc-box">Input:  6<br/>        4 5 6 5 4 7<br/><br/>Output: 4<br/>(Distinct: 4,5,6,7)</div></div>
+            <div><span class="tc-label">Test Case 2 — Invalid (String input)</span>
+              <div class="tc-box">Input:  three<br/><br/>Output: InputMismatchException</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q5 — Consumer Billing ══ -->
+  <div class="q-card" id="q5">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">05</div>
+      <div class="q-title">
+        <h2>Consumer Billing System</h2>
+        <div class="q-desc">Slab billing · 5% surcharge · 10% discount · fixed charge</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-purple">Collections</span>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q5-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q5-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q5-logic')">Bill Formula</button>
+      </div>
+      <div id="q5-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q5-code-text">import java.util.*;
+
+<span class="kw">class</span> <span class="cls">Consumer</span> {
+    <span class="kw">private</span> <span class="cls">String</span> consumerId, consumerName;
+    <span class="kw">private int</span>    unitsConsumed;
+    <span class="kw">private double</span> billAmount;
+
+    <span class="kw">public</span> <span class="fn">Consumer</span>(<span class="cls">String</span> id, <span class="cls">String</span> name, <span class="kw">int</span> units) {
+        consumerId = id; consumerName = name; unitsConsumed = units;
+    }
+
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getConsumerId</span>()   { <span class="kw">return</span> consumerId; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getConsumerName</span>() { <span class="kw">return</span> consumerName; }
+    <span class="kw">public int</span>    <span class="fn">getUnitsConsumed</span>() { <span class="kw">return</span> unitsConsumed; }
+    <span class="kw">public double</span> <span class="fn">getBillAmount</span>()   { <span class="kw">return</span> billAmount; }
+    <span class="kw">public void</span>   <span class="fn">setBillAmount</span>(<span class="kw">double</span> b) { billAmount = b; }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">public static void</span> <span class="fn">calculateBill</span>(<span class="cls">ArrayList</span>&lt;<span class="cls">Consumer</span>&gt; consumers) {
+        <span class="kw">if</span> (consumers.<span class="fn">isEmpty</span>()) { System.out.<span class="fn">println</span>(<span class="str">"No consumers present in the list"</span>); <span class="kw">return</span>; }
+        <span class="kw">for</span> (<span class="cls">Consumer</span> c : consumers) {
+            <span class="kw">int</span>    units = c.<span class="fn">getUnitsConsumed</span>();
+            <span class="kw">double</span> bill;
+
+            <span class="kw">if</span>      (units &lt;= <span class="num">100</span>) bill = units * <span class="num">3</span>;
+            <span class="kw">else if</span> (units &lt;= <span class="num">300</span>) bill = <span class="num">100</span>*<span class="num">3</span> + (units-<span class="num">100</span>)*<span class="num">5</span>;
+            <span class="kw">else if</span> (units &lt;= <span class="num">500</span>) bill = <span class="num">100</span>*<span class="num">3</span> + <span class="num">200</span>*<span class="num">5</span> + (units-<span class="num">300</span>)*<span class="num">8</span>;
+            <span class="kw">else</span>                  bill = <span class="num">100</span>*<span class="num">3</span> + <span class="num">200</span>*<span class="num">5</span> + <span class="num">200</span>*<span class="num">8</span> + (units-<span class="num">500</span>)*<span class="num">10</span>;
+
+            <span class="kw">if</span> (units > <span class="num">300</span>) bill *= <span class="num">1.05</span>;   <span class="cm">// 5% surcharge</span>
+            <span class="kw">if</span> (bill  > <span class="num">3000</span>) bill *= <span class="num">0.90</span>;  <span class="cm">// 10% discount</span>
+            bill += <span class="num">50</span>;                        <span class="cm">// fixed charge</span>
+
+            c.<span class="fn">setBillAmount</span>(bill);
+            System.out.<span class="fn">println</span>(c.<span class="fn">getConsumerName</span>());
+            System.out.<span class="fn">println</span>(c.<span class="fn">getBillAmount</span>());
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">findPersonDetails</span>(<span class="cls">String</span> name, <span class="cls">ArrayList</span>&lt;<span class="cls">Consumer</span>&gt; consumers) {
+        <span class="kw">for</span> (<span class="cls">Consumer</span> c : consumers) {
+            <span class="kw">if</span> (c.<span class="fn">getConsumerName</span>().<span class="fn">equalsIgnoreCase</span>(name)) {
+                System.out.<span class="fn">println</span>(c.<span class="fn">getConsumerId</span>());
+                System.out.<span class="fn">println</span>(c.<span class="fn">getConsumerName</span>());
+                System.out.<span class="fn">println</span>(c.<span class="fn">getUnitsConsumed</span>());
+                System.out.<span class="fn">println</span>(c.<span class="fn">getBillAmount</span>());
+                <span class="kw">return</span>;
+            }
+        }
+        System.out.<span class="fn">println</span>(<span class="str">"No such consumer found"</span>);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) <span class="kw">throws</span> <span class="cls">Exception</span> {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>(); sc.<span class="fn">nextLine</span>();
+        <span class="cls">ArrayList</span>&lt;<span class="cls">Consumer</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="cls">String</span> id    = sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> name  = sc.<span class="fn">nextLine</span>();
+            <span class="kw">int</span>    units = sc.<span class="fn">nextInt</span>(); sc.<span class="fn">nextLine</span>();
+            list.<span class="fn">add</span>(<span class="kw">new</span> <span class="cls">Consumer</span>(id, name, units));
+        }
+        <span class="cls">String</span> search = sc.<span class="fn">nextLine</span>();
+        <span class="fn">calculateBill</span>(list);
+        <span class="fn">findPersonDetails</span>(search, list);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q5-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <span class="tc-label">Test Case 1</span>
+          <div class="tc-box">Input: 3 / C101 ALICE 120 / C102 BOB 350 / C103 CHARLIE 600 / CHARLIE
+Output:
+ALICE → 450.0 | BOB → 1835.0 | CHARLIE → 3735.5
+C103 / CHARLIE / 600 / 3735.5</div>
+        </div>
+      </div>
+      <div id="q5-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>Billing Slabs</h4>
+            <ul>
+              <li>1–100 units → ₹3/unit</li>
+              <li>101–300 units → ₹5/unit</li>
+              <li>301–500 units → ₹8/unit</li>
+              <li>&gt;500 units → ₹10/unit</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Adjustments (in order)</h4>
+            <ul>
+              <li>If units &gt; 300 → bill × 1.05 (surcharge)</li>
+              <li>If bill &gt; 3000 → bill × 0.90 (discount)</li>
+              <li>Always → bill + 50 (fixed charge)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q6 — Anagram ══ -->
+  <div class="q-card" id="q6">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">06</div>
+      <div class="q-title">
+        <h2>Check Anagram Strings</h2>
+        <div class="q-desc">Frequency array · checkAnagram method · boolean return</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-blue">Strings</span>
+        <span class="badge badge-green">Easy</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q6-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q6-tc')">Test Cases</button>
+      </div>
+      <div id="q6-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q6-code-text">import java.io.*;
+
+<span class="kw">class</span> <span class="cls">Result</span> {
+    <span class="kw">public static boolean</span> <span class="fn">checkAnagram</span>(<span class="cls">String</span> s1, <span class="cls">String</span> s2) {
+        <span class="kw">if</span> (s1.<span class="fn">length</span>() != s2.<span class="fn">length</span>()) <span class="kw">return false</span>;
+
+        <span class="kw">int</span>[] freq = <span class="kw">new int</span>[<span class="num">26</span>];
+        <span class="kw">for</span> (<span class="kw">char</span> c : s1.<span class="fn">toCharArray</span>()) freq[c - <span class="str">'a'</span>]++;
+        <span class="kw">for</span> (<span class="kw">char</span> c : s2.<span class="fn">toCharArray</span>()) freq[c - <span class="str">'a'</span>]--;
+
+        <span class="kw">for</span> (<span class="kw">int</span> f : freq) <span class="kw">if</span> (f != <span class="num">0</span>) <span class="kw">return false</span>;
+        <span class="kw">return true</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) <span class="kw">throws</span> <span class="cls">IOException</span> {
+        <span class="cls">BufferedReader</span> br = <span class="kw">new</span> <span class="cls">BufferedReader</span>(<span class="kw">new</span> <span class="cls">InputStreamReader</span>(System.in));
+        <span class="cls">String</span> s1 = br.<span class="fn">readLine</span>().<span class="fn">trim</span>();
+        <span class="cls">String</span> s2 = br.<span class="fn">readLine</span>().<span class="fn">trim</span>();
+        System.out.<span class="fn">println</span>(<span class="cls">Result</span>.<span class="fn">checkAnagram</span>(s1, s2));
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q6-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div><span class="tc-label">Example 1 — Anagram</span>
+              <div class="tc-box">s1 = "listen"<br/>s2 = "silent"<br/><br/>Output: true</div></div>
+            <div><span class="tc-label">Example 2 — Not Anagram</span>
+              <div class="tc-box">s1 = "allergy"<br/>s2 = "allergic"<br/><br/>Output: false</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q7 — Student Ranking ══ -->
+  <div class="q-card" id="q7">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">07</div>
+      <div class="q-title">
+        <h2>Student Ranking — Java</h2>
+        <div class="q-desc">findStudentWithMaxAgeMinMarks · searchStudentByName · Sorting</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-purple">Arrays</span>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q7-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q7-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q7-logic')">Logic</button>
+      </div>
+      <div id="q7-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q7-code-text">import java.util.*;
+
+<span class="kw">class</span> <span class="cls">Student</span> {
+    <span class="kw">private int</span>    id, marks, age;
+    <span class="kw">private</span> <span class="cls">String</span> name;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="kw">int</span> id, <span class="cls">String</span> name, <span class="kw">int</span> marks, <span class="kw">int</span> age) {
+        <span class="kw">this</span>.id = id; <span class="kw">this</span>.name = name; <span class="kw">this</span>.marks = marks; <span class="kw">this</span>.age = age;
+    }
+
+    <span class="kw">public int</span>    <span class="fn">getId</span>()    { <span class="kw">return</span> id; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public int</span>    <span class="fn">getMarks</span>() { <span class="kw">return</span> marks; }
+    <span class="kw">public int</span>    <span class="fn">getAge</span>()   { <span class="kw">return</span> age; }
+
+    <span class="kw">public void</span> <span class="fn">setId</span>(<span class="kw">int</span> id)        { <span class="kw">this</span>.id = id; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> n)    { name = n; }
+    <span class="kw">public void</span> <span class="fn">setMarks</span>(<span class="kw">int</span> m)     { marks = m; }
+    <span class="kw">public void</span> <span class="fn">setAge</span>(<span class="kw">int</span> a)       { age = a; }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">public static</span> <span class="cls">Student</span> <span class="fn">findStudentWithMaxAgeMinMarks</span>(<span class="cls">Student</span>[] students) {
+        <span class="kw">if</span> (students == <span class="kw">null</span> || students.length == <span class="num">0</span>) <span class="kw">return null</span>;
+        <span class="cls">Student</span> res = students[<span class="num">0</span>];
+        <span class="kw">for</span> (<span class="cls">Student</span> s : students) {
+            <span class="kw">if</span> (s.<span class="fn">getAge</span>() > res.<span class="fn">getAge</span>() ||
+               (s.<span class="fn">getAge</span>() == res.<span class="fn">getAge</span>() &amp;&amp; s.<span class="fn">getMarks</span>() &lt; res.<span class="fn">getMarks</span>())) res = s;
+        }
+        <span class="kw">return</span> res;
+    }
+
+    <span class="kw">public static</span> <span class="cls">Student</span>[] <span class="fn">searchStudentByName</span>(<span class="cls">Student</span>[] students, <span class="cls">String</span> name) {
+        <span class="cls">List</span>&lt;<span class="cls">Student</span>&gt; matched = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="cls">Student</span> s : students)
+            <span class="kw">if</span> (s.<span class="fn">getName</span>().<span class="fn">equalsIgnoreCase</span>(name)) matched.<span class="fn">add</span>(s);
+        <span class="kw">if</span> (matched.<span class="fn">isEmpty</span>()) <span class="kw">return null</span>;
+        matched.<span class="fn">sort</span>((a, b) -> b.<span class="fn">getMarks</span>() - a.<span class="fn">getMarks</span>());
+        <span class="kw">return</span> matched.<span class="fn">toArray</span>(<span class="kw">new</span> <span class="cls">Student</span>[<span class="num">0</span>]);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>(); sc.<span class="fn">nextLine</span>();
+        <span class="cls">Student</span>[] students = <span class="kw">new</span> <span class="cls">Student</span>[n];
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="kw">int</span>    id   = sc.<span class="fn">nextInt</span>();  sc.<span class="fn">nextLine</span>();
+            <span class="cls">String</span> name = sc.<span class="fn">nextLine</span>();
+            <span class="kw">int</span>    marks= sc.<span class="fn">nextInt</span>();
+            <span class="kw">int</span>    age  = sc.<span class="fn">nextInt</span>();  sc.<span class="fn">nextLine</span>();
+            students[i] = <span class="kw">new</span> <span class="cls">Student</span>(id, name, marks, age);
+        }
+        <span class="cls">String</span> searchName = sc.<span class="fn">nextLine</span>();
+
+        <span class="cls">Student</span> maxAge = <span class="fn">findStudentWithMaxAgeMinMarks</span>(students);
+        <span class="kw">if</span> (maxAge == <span class="kw">null</span>) System.out.<span class="fn">println</span>(<span class="str">"No Students found"</span>);
+        <span class="kw">else</span> { System.out.<span class="fn">println</span>(<span class="str">"id-"</span>+maxAge.<span class="fn">getId</span>()); System.out.<span class="fn">println</span>(<span class="str">"name-"</span>+maxAge.<span class="fn">getName</span>()); System.out.<span class="fn">println</span>(<span class="str">"marks-"</span>+maxAge.<span class="fn">getMarks</span>()); System.out.<span class="fn">println</span>(<span class="str">"age-"</span>+maxAge.<span class="fn">getAge</span>()); }
+
+        <span class="cls">Student</span>[] found = <span class="fn">searchStudentByName</span>(students, searchName);
+        <span class="kw">if</span> (found == <span class="kw">null</span>) System.out.<span class="fn">println</span>(<span class="str">"No Student found with mentioned attribute."</span>);
+        <span class="kw">else for</span> (<span class="cls">Student</span> s : found) { System.out.<span class="fn">println</span>(<span class="str">"id-"</span>+s.<span class="fn">getId</span>()); System.out.<span class="fn">println</span>(<span class="str">"name-"</span>+s.<span class="fn">getName</span>()); System.out.<span class="fn">println</span>(<span class="str">"marks-"</span>+s.<span class="fn">getMarks</span>()); System.out.<span class="fn">println</span>(<span class="str">"age-"</span>+s.<span class="fn">getAge</span>()); }
+
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q7-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <span class="tc-label">Sample Input</span>
+          <div class="tc-box">3
+101 Rohan 90 21
+102 Raj 80 22
+103 Rahul 88 22
+Raj</div>
+          <span class="tc-label" style="margin-top:12px;display:block;">Sample Output</span>
+          <div class="tc-box">id-102
+name-Raj
+marks-80
+age-22
+id-102
+name-Raj
+marks-80
+age-22</div>
+        </div>
+      </div>
+      <div id="q7-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>findStudentWithMaxAgeMinMarks</h4>
+            <p>Find max age. On tie, pick student with lower marks.</p>
+          </div>
+          <div class="info-block">
+            <h4>searchStudentByName</h4>
+            <p>Case-insensitive match. Return all matches sorted by marks descending. Return null if not found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Q8 — Neon Number ══ -->
+  <div class="q-card" id="q8">
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-number">08</div>
+      <div class="q-title">
+        <h2>Neon Number — Exception Handling</h2>
+        <div class="q-desc">NotNeonException · digit sum of square · custom exception</div>
+      </div>
+      <div class="q-badges">
+        <span class="badge badge-blue">Exception Handling</span>
+        <span class="badge badge-amber">Medium</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="q-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'q8-code')">Code</button>
+        <button class="tab-btn" onclick="switchTab(this,'q8-tc')">Test Cases</button>
+        <button class="tab-btn" onclick="switchTab(this,'q8-logic')">Neon Explained</button>
+      </div>
+      <div id="q8-code" class="tab-panel active">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre id="q8-code-text">import java.util.*;
+
+<span class="kw">class</span> <span class="cls">NotNeonException</span> <span class="kw">extends</span> <span class="cls">Exception</span> {
+    <span class="kw">public</span> <span class="fn">NotNeonException</span>(<span class="cls">String</span> message) { <span class="kw">super</span>(message); }
+}
+
+<span class="kw">public class</span> <span class="cls">Solution</span> {
+
+    <span class="kw">static boolean</span> <span class="fn">isNeon</span>(<span class="kw">int</span> n) {
+        <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return true</span>;   <span class="cm">// 0² = 0, digit sum = 0 == 0</span>
+        <span class="kw">long</span> square = (<span class="kw">long</span>) n * n;
+        <span class="kw">int</span> digitSum = <span class="num">0</span>;
+        <span class="kw">while</span> (square > <span class="num">0</span>) { digitSum += square % <span class="num">10</span>; square /= <span class="num">10</span>; }
+        <span class="kw">return</span> digitSum == n;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+        <span class="kw">int</span> size = sc.<span class="fn">nextInt</span>();
+        <span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; numbers = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; size; i++) numbers.<span class="fn">add</span>(sc.<span class="fn">nextInt</span>());
+
+        <span class="kw">for</span> (<span class="kw">int</span> num : numbers) {
+            <span class="kw">try</span> {
+                <span class="kw">if</span> (<span class="fn">isNeon</span>(num)) System.out.<span class="fn">println</span>(num);
+                <span class="kw">else throw new</span> <span class="cls">NotNeonException</span>(num + <span class="str">" is not a neon number"</span>);
+            } <span class="kw">catch</span> (<span class="cls">NotNeonException</span> e) {
+                System.out.<span class="fn">println</span>(e.<span class="fn">getClass</span>().<span class="fn">getSimpleName</span>() + <span class="str">": "</span> + e.<span class="fn">getMessage</span>());
+            }
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+        </div>
+      </div>
+      <div id="q8-tc" class="tab-panel">
+        <div class="info-panel" style="display:block;padding:24px 28px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div><span class="tc-label">Test Case 1</span>
+              <div class="tc-box">Input: 5 / 888 / 29 / 1 / 8 / 0
+
+Output:
+NotNeonException: 888 is not a neon number
+NotNeonException: 29 is not a neon number
+1
+NotNeonException: 8 is not a neon number
+0</div></div>
+            <div><span class="tc-label">Test Case 2</span>
+              <div class="tc-box">Input: 3 / 38 / 9 / 45
+
+Output:
+NotNeonException: 38 is not a neon number
+9
+NotNeonException: 45 is not a neon number</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="q8-logic" class="tab-panel">
+        <div class="info-panel">
+          <div class="info-block">
+            <h4>What is a Neon Number?</h4>
+            <ul>
+              <li>n=0 → 0²=0, sum=0 → ✓</li>
+              <li>n=1 → 1²=1, sum=1 → ✓</li>
+              <li>n=9 → 9²=81, 8+1=9 → ✓</li>
+              <li>n=8 → 8²=64, 6+4=10 ≠ 8 → ✗</li>
+              <li>n=29 → 29²=841, 8+4+1=13 ≠ 29 → ✗</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Output format</h4>
+            <p>If neon → print the number.<br/>If not → print <code>NotNeonException: &lt;n&gt; is not a neon number</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end container -->
+
+<footer>
+  Java Solutions · PRA SBQ · Java 17 · All 8 Questions Covered
+</footer>
+
+<script>
+  function toggle(header) {
+    const card = header.closest('.q-card');
+    card.classList.toggle('open');
+  }
+
+  function switchTab(btn, panelId) {
+    const body = btn.closest('.q-body');
+    body.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    body.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const wrap = btn.closest('.code-wrap');
+    const pre  = wrap.querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Open all cards on load; auto-close others (accordion) optional
+  document.querySelectorAll('.q-card').forEach((card, i) => {
+    if (i !== 0) card.classList.remove('open');
+  });
+</script>
+</body>
+</html>
